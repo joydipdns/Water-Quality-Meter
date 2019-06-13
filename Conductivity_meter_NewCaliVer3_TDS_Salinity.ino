@@ -24,7 +24,7 @@ void setup ( )
   lcd.setCursor(0, 1) ;
   lcd.print( "USE CHANNEL ONE  " ) ;
   lcd.setCursor(0, 0) ;
-  delay (5000) ;
+  delay (4000) ;
   lcd.clear( ) ;
   lcd.setCursor (0, 0) ;
   lcd.print ( "  PRESS MEASURE   " ) ;
