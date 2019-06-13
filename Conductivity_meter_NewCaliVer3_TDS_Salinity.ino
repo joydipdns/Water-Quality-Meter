@@ -1,4 +1,3 @@
-
 #include <LiquidCrystal.h>
 
 //--------------------------------------------initializations--------------------------------------------//
@@ -130,7 +129,6 @@ void loop ( )
           displaySal ( Sal ) ;
         }
       }
+      break ;
   }
-  break ;
 }
-
