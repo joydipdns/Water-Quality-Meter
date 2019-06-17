@@ -16,7 +16,7 @@ boolean edge3 ;
 boolean edge4 ;
 LiquidCrystal lcd (12 , 11 , 5 , 4 , 3 , 2 ) ;
 
-byte degree[8] = {
+byte degree[8] = {              //custom character degree symbol
   B00110,
   B01001,
   B01001,
