@@ -5,6 +5,10 @@ const int buttonPin = 7 ;
 int buttonState = 0 ;
 int lastButtonState = 0 ;
 float S = 0.00, Tds = 0.00, Sal = 0.00;
+int aval;
+int counter = 0;
+float a=0.0;
+float temp=0.0;
 int ch = 1 ;
 boolean edge1 ;
 boolean edge2 ;
@@ -12,12 +16,23 @@ boolean edge3 ;
 boolean edge4 ;
 LiquidCrystal lcd (12 , 11 , 5 , 4 , 3 , 2 ) ;
 
+byte degree[8] = {
+  B00110,
+  B01001,
+  B01001,
+  B00110,
+  B00000,
+  B00000,
+  B00000,
+  B00000
+};
+
 //----------------------------------------------setup function--------------------------------------------//
 
 void setup ( )
 {
-  Serial.begin(9600);
   pinMode ( buttonPin , INPUT) ;
+  lcd.createChar(0, degree);
   lcd.begin (16, 2) ;
   lcd.print ( "TO BEGIN MEASURE" ) ;
   lcd.setCursor(0, 1) ;
@@ -84,11 +99,31 @@ void displayTDS ( float tds )               //for displaying TDS
 void displaySal ( float sal )                //for displaying SALINITY
 {
   lcd.clear( ) ;
-  lcd.print ( "Salinity= " ) ;
+  lcd.print ( "Sal= " ) ;
   lcd.print ( sal , 3) ;    //LCD prints upto 3 decimal places
   lcd.print ( " ppm" ) ;
   delay ( 3000 ) ;
   lcd.setCursor (0, 0) ;
+}
+
+float tempComp()                            //for sensing the solution temperature
+{
+  while (counter < 50)
+  {
+    aval = analogRead(A3);
+    float mv = (aval / 1024.0) * 5000;
+    float temp = (mv / 10) + 1.5;
+    a = a + temp;
+    counter++;
+    delay(100);
+  }
+  while (counter == 50)
+  {
+    float avg_temp = a / 50.0;
+    counter=0;
+    a=0.0;
+    return(avg_temp);
+  }
 }
 
 //-------------------------------------------------loop function--------------------------------------------------//
@@ -127,6 +162,12 @@ void loop ( )
           displayTDS ( Tds ) ;
           delay ( 2000 ) ;
           displaySal ( Sal ) ;
+          lcd.clear();
+          lcd.print ( "TEMP= " ) ;
+          lcd.print(tempComp(),3);
+          lcd.print(" ");
+          lcd.write(byte(0));
+          lcd.print("C");
         }
       }
       break ;
