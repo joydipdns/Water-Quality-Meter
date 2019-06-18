@@ -7,13 +7,18 @@ int lastButtonState = 0 ;
 float S = 0.00, Tds = 0.00, Sal = 0.00;
 int aval;
 int counter = 0;
-float a=0.0;
-float temp=0.0;
+float a = 0.0;
+float temp = 0.0;
 int ch = 1 ;
 boolean edge1 ;
 boolean edge2 ;
 boolean edge3 ;
 boolean edge4 ;
+boolean edgeS ;
+boolean edgeVol ;
+boolean edgeTds ;
+boolean edgeSal ;
+boolean edgeTemp ;
 LiquidCrystal lcd (12 , 11 , 5 , 4 , 3 , 2 ) ;
 
 byte degree[8] = {              //custom character degree symbol
@@ -37,13 +42,11 @@ void setup ( )
   lcd.print ( "TO BEGIN MEASURE" ) ;
   lcd.setCursor(0, 1) ;
   lcd.print( "USE CHANNEL ONE  " ) ;
-  lcd.setCursor(0, 0) ;
-  delay (4000) ;
+  delay (3000) ;
   lcd.clear( ) ;
-  lcd.setCursor (0, 0) ;
-  lcd.print ( "  PRESS MEASURE   " ) ;
+  lcd.print ( "  PRESS BUTTON   " ) ;
   lcd.setCursor ( 0, 1 ) ;
-  lcd.print ( "BUTTON 2 MEASURE" ) ;
+  lcd.print ( "   TO MEASURE" ) ;
 }
 
 //---------------------------------------------------functions------------------------------------------------//
@@ -65,15 +68,21 @@ int trigger ( )                               //for sensing the external trigger
 void displayVol ( float v1 , float v2 )        //for displaying measured VOLTAGE
 {
   lcd.clear ( ) ;
-  lcd.print ( "V1=" ) ;
+  lcd.print ( "V1= " ) ;
   lcd.print ( v1 , 3 ) ;    //LCD prints upto 3 decimal places
-  lcd.print ( " " ) ;
+  lcd.print ( " V" ) ;
   lcd.setCursor ( 0, 1 ) ;
   lcd.print ( "V2= " ) ;
   lcd.print ( v2 , 3 ) ;    //LCD prints upto 3 decimal places
-  lcd.print ( " Volt" ) ;
-  delay ( 3000 ) ;
-  lcd.setCursor (0, 0) ;
+  lcd.print ( " V" ) ;
+  delay ( 2500 ) ;
+  lcd.clear();
+  lcd.print ( " PRESS FOR COND " ) ;
+  edgeVol = trigger ( ) ;
+  while ( edgeVol != HIGH ) {
+    edgeVol = trigger ( ) ;
+  }
+  delay ( 300 ) ;
 }
 
 void displayS ( float s )                   //for displaying CONDUCTIVITY
@@ -82,8 +91,15 @@ void displayS ( float s )                   //for displaying CONDUCTIVITY
   lcd.print ( "S= " ) ;
   lcd.print ( s , 3) ;      //LCD prints upto 3 decimal places
   lcd.print ( " uS/cm" ) ;
-  delay ( 3000 ) ;
-  lcd.setCursor (0, 0) ;
+  lcd.setCursor (0, 1) ;
+  lcd.print ( " PRESS FOR TDS " ) ;
+  edgeS = trigger ( ) ;
+  delay(50);
+  while ( edgeS != HIGH ) {
+    edgeS = trigger ( ) ;
+    delay(50);
+  }
+  delay ( 300 ) ;
 }
 
 void displayTDS ( float tds )               //for displaying TDS
@@ -92,8 +108,15 @@ void displayTDS ( float tds )               //for displaying TDS
   lcd.print ( "TDS= " ) ;
   lcd.print ( tds , 3) ;    //LCD prints upto 3 decimal places
   lcd.print ( " ppm" ) ;
-  delay ( 3000 ) ;
-  lcd.setCursor (0, 0) ;
+  lcd.setCursor (0, 1) ;
+  lcd.print ( " PRESS FOR SAL  " ) ;
+  edgeTds = trigger ( ) ;
+  delay(50);
+  while ( edgeTds != HIGH ) {
+    edgeTds = trigger ( ) ;
+    delay(50);
+  }
+  delay ( 300 ) ;
 }
 
 void displaySal ( float sal )                //for displaying SALINITY
@@ -102,27 +125,33 @@ void displaySal ( float sal )                //for displaying SALINITY
   lcd.print ( "Sal= " ) ;
   lcd.print ( sal , 3) ;    //LCD prints upto 3 decimal places
   lcd.print ( " ppm" ) ;
-  delay ( 3000 ) ;
-  lcd.setCursor (0, 0) ;
+  lcd.setCursor (0, 1) ;
+  lcd.print ( " PRESS FOR TEMP " ) ;
+  edgeSal = trigger ( ) ;
+  delay(50);
+  while ( edgeSal != HIGH ) {
+    edgeSal = trigger ( ) ;
+    delay(50);
+  }
+  delay ( 300 ) ;
 }
 
 float tempComp()                            //for sensing the solution temperature
 {
-  while (counter < 50)
+  while (counter < 2000)
   {
     aval = analogRead(A3);
     float mv = (aval / 1024.0) * 5000;
-    float temp = (mv / 10) + 1.5;
+    float temp = (mv / 10) - 50;   //calibration equation for TMP36
     a = a + temp;
     counter++;
-    delay(100);
   }
-  while (counter == 50)
+  while (counter == 2000)
   {
-    float avg_temp = a / 50.0;
-    counter=0;
-    a=0.0;
-    return(avg_temp);
+    float avg_temp = a / 2000.0;
+    counter = 0;
+    a = 0.0;
+    return (avg_temp);
   }
 }
 
@@ -136,6 +165,7 @@ void loop ( )
     case 1 :
       {
         edge1 = trigger ( ) ;
+        delay(50);
         if ( edge1 == HIGH )
         {
           int sensorValue1 = analogRead (A1 ) ;
@@ -156,15 +186,13 @@ void loop ( )
             Sal = 0.829 * S + 9.899;
           }
           displayVol ( voltage1 , voltage2 ) ;
-          delay ( 2000 ) ;
           displayS ( S ) ;
-          delay ( 2000 ) ;
           displayTDS ( Tds ) ;
-          delay ( 2000 ) ;
           displaySal ( Sal ) ;
           lcd.clear();
-          lcd.print ( "TEMP= " ) ;
-          lcd.print(tempComp(),3);
+          lcd.print ( "TEMP= wait.." ) ;
+          lcd.setCursor (6, 0) ;
+          lcd.print(tempComp(), 3);
           lcd.print(" ");
           lcd.write(byte(0));
           lcd.print("C");
