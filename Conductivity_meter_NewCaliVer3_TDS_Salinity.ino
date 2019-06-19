@@ -142,7 +142,8 @@ float tempComp()                            //for sensing the solution temperatu
   {
     aval = analogRead(A3);
     float mv = (aval / 1024.0) * 5000;
-    float temp = (mv / 10) - 50;   //calibration equation for TMP36
+    float temp = (mv / 10) + 1.5;    //calibration equation for LM35
+    //float temp = (mv / 10) - 50;   //calibration equation for TMP36
     a = a + temp;
     counter++;
   }
