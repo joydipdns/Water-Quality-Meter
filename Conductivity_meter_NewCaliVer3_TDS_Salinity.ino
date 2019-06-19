@@ -4,7 +4,7 @@
 const int buttonPin = 7 ;
 int buttonState = 0 ;
 int lastButtonState = 0 ;
-float S = 0.00, Tds = 0.00, Sal = 0.00;
+float S = 0.00, Tds = 0.00, Sal = 0.00, S25=0.0;
 int aval;
 int counter = 0;
 float a = 0.0;
@@ -19,6 +19,7 @@ boolean edgeVol ;
 boolean edgeTds ;
 boolean edgeSal ;
 boolean edgeTemp ;
+boolean edgeS25 ;
 LiquidCrystal lcd (12 , 11 , 5 , 4 , 3 , 2 ) ;
 
 byte degree[8] = {              //custom character degree symbol
@@ -65,6 +66,26 @@ int trigger ( )                               //for sensing the external trigger
   lastButtonState = buttonState ;
 }
 
+float tempComp()                            //for sensing the solution temperature
+{
+  while (counter < 2000)
+  {
+    aval = analogRead(A3);
+    float mv = (aval / 1024.0) * 5000;
+    float temp = (mv / 10) + 1.5;    //calibration equation for LM35
+    //float temp = (mv / 10) - 50;   //calibration equation for TMP36
+    a = a + temp;
+    counter++;
+  }
+  while (counter == 2000)
+  {
+    float avg_temp = a / 2000.0;
+    counter = 0;
+    a = 0.0;
+    return (avg_temp);
+  }
+}
+
 void displayVol ( float v1 , float v2 )        //for displaying measured VOLTAGE
 {
   lcd.clear ( ) ;
@@ -79,8 +100,10 @@ void displayVol ( float v1 , float v2 )        //for displaying measured VOLTAGE
   lcd.clear();
   lcd.print ( " PRESS FOR COND " ) ;
   edgeVol = trigger ( ) ;
+  delay(50);
   while ( edgeVol != HIGH ) {
     edgeVol = trigger ( ) ;
+    delay(50);
   }
   delay ( 300 ) ;
 }
@@ -136,26 +159,22 @@ void displaySal ( float sal )                //for displaying SALINITY
   delay ( 300 ) ;
 }
 
-float tempComp()                            //for sensing the solution temperature
+void displayS25 ( float s25 )                   //for displaying CONDUCTIVITY at 25'C
 {
-  while (counter < 2000)
-  {
-    aval = analogRead(A3);
-    float mv = (aval / 1024.0) * 5000;
-    float temp = (mv / 10) + 1.5;    //calibration equation for LM35
-    //float temp = (mv / 10) - 50;   //calibration equation for TMP36
-    a = a + temp;
-    counter++;
+  lcd.clear( ) ;
+  lcd.print ( "S(25)= " ) ;
+  lcd.print ( s , 3) ;      //LCD prints upto 3 decimal places
+  lcd.print ( " uS/cm" ) ;
+  lcd.setCursor (0, 1) ;
+  lcd.print ( " PRESS to Repeat " ) ;
+  edgeS25 = trigger ( ) ;
+  delay(50);
+  while ( edgeS25 != HIGH ) {
+    edgeS25 = trigger ( ) ;
+    delay(50);
   }
-  while (counter == 2000)
-  {
-    float avg_temp = a / 2000.0;
-    counter = 0;
-    a = 0.0;
-    return (avg_temp);
-  }
+  delay ( 300 ) ;
 }
-
 //-------------------------------------------------loop function--------------------------------------------------//
 
 void loop ( )
@@ -174,17 +193,20 @@ void loop ( )
           float voltage1 = sensorValue1 * ( 5.0 / 1023.0 ) ;
           float voltage2 = sensorValue2 * ( 5.0 / 1023.0 ) ;
           float x = voltage1 / voltage2;
+          float temp=tempcomp();
           if (voltage2 == 5.000)
           {
             S = 0.00;
             Tds = 0.00;
             Sal = 0.00;
+            S25 = 0.00;
           }
           else
           {
             S = (1.110 * x * x * x) - (11.70 * x * x) + (63.23 * x) - 19.38;
             Tds = 0.965 * S - 0.522;
             Sal = 0.829 * S + 9.899;
+            S25= S/(1+0.021*(temp-25));
           }
           displayVol ( voltage1 , voltage2 ) ;
           displayS ( S ) ;
@@ -193,10 +215,12 @@ void loop ( )
           lcd.clear();
           lcd.print ( "TEMP= wait.." ) ;
           lcd.setCursor (6, 0) ;
-          lcd.print(tempComp(), 3);
+          lcd.print(temp, 3);
           lcd.print(" ");
           lcd.write(byte(0));
           lcd.print("C");
+          delay(300);
+          displayS25 ( S25 ) ;
         }
       }
       break ;
