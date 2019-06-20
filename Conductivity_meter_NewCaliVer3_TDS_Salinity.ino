@@ -178,12 +178,12 @@ void displaySal ( float sal )                //for displaying SALINITY
   lcd.print ( " ppm" ) ;
   lcd.setCursor (0, 1) ;
   lcd.print ( "PRESS TO REPEAT " ) ;
-  edgeSal = trigger ( ) ;
-  delay(50);
-  while ( edgeSal != HIGH ) {
-    edgeSal = trigger ( ) ;
-    delay(50);
-  }
+//  edgeSal = trigger ( ) ;
+//  delay(50);
+//  while ( edgeSal != HIGH ) {
+//    edgeSal = trigger ( ) ;
+//    delay(50);
+//  }
   delay ( 300 ) ;
 }
 
