@@ -96,30 +96,57 @@ void displayVol ( float v1 , float v2 )        //for displaying measured VOLTAGE
   lcd.print ( "V2= " ) ;
   lcd.print ( v2 , 3 ) ;    //LCD prints upto 3 decimal places
   lcd.print ( " V" ) ;
-  delay ( 2500 ) ;
-  lcd.clear();
+  delay ( 3000 ) ;
+}
+
+void displayTemp ( float temp )              //for displaying Temperature
+{
+  lcd.clear( ) ;
+  lcd.print ( "TEMP= " ) ;
+  lcd.print(temp, 3);       //LCD prints upto 3 decimal places
+  lcd.print(" ");
+  lcd.write(byte(0));
+  lcd.print("C");
   lcd.print ( " PRESS FOR COND " ) ;
-  edgeVol = trigger ( ) ;
+  edgeTemp = trigger ( ) ;
   delay(50);
-  while ( edgeVol != HIGH ) {
-    edgeVol = trigger ( ) ;
+  while ( edgeTemp != HIGH ) {
+    edgeTemp = trigger ( ) ;
     delay(50);
   }
   delay ( 300 ) ;
 }
 
-void displayS ( float s )                   //for displaying CONDUCTIVITY
+
+void displayS ( float s )                      //for displaying CONDUCTIVITY
 {
   lcd.clear( ) ;
   lcd.print ( "S= " ) ;
   lcd.print ( s , 3) ;      //LCD prints upto 3 decimal places
   lcd.print ( " uS/cm" ) ;
   lcd.setCursor (0, 1) ;
-  lcd.print ( " PRESS FOR TDS " ) ;
+  lcd.print ( " PRESS FOR S25 " ) ;
   edgeS = trigger ( ) ;
   delay(50);
   while ( edgeS != HIGH ) {
     edgeS = trigger ( ) ;
+    delay(50);
+  }
+  delay ( 300 ) ;
+}
+
+void displayS25 ( float s25 )                   //for displaying CONDUCTIVITY at 25'C
+{
+  lcd.clear( ) ;
+  lcd.print ( "S25= " ) ;
+  lcd.print ( s25 , 3) ;      //LCD prints upto 3 decimal places
+  lcd.print ( "uS/cm" ) ;
+  lcd.setCursor (0, 1) ;
+  lcd.print ( "PRESS FOR TDS  " ) ;
+  edgeS25 = trigger ( ) ;
+  delay(50);
+  while ( edgeS25 != HIGH ) {
+    edgeS25 = trigger ( ) ;
     delay(50);
   }
   delay ( 300 ) ;
@@ -149,7 +176,7 @@ void displaySal ( float sal )                //for displaying SALINITY
   lcd.print ( sal , 3) ;    //LCD prints upto 3 decimal places
   lcd.print ( " ppm" ) ;
   lcd.setCursor (0, 1) ;
-  lcd.print ( " PRESS FOR TEMP " ) ;
+  lcd.print ( "PRESS TO REPEAT " ) ;
   edgeSal = trigger ( ) ;
   delay(50);
   while ( edgeSal != HIGH ) {
@@ -159,22 +186,6 @@ void displaySal ( float sal )                //for displaying SALINITY
   delay ( 300 ) ;
 }
 
-void displayS25 ( float s25 )                   //for displaying CONDUCTIVITY at 25'C
-{
-  lcd.clear( ) ;
-  lcd.print ( "S(25)= " ) ;
-  lcd.print ( s25 , 3) ;      //LCD prints upto 3 decimal places
-  lcd.print ( " uS/cm" ) ;
-  lcd.setCursor (0, 1) ;
-  lcd.print ( " PRESS to Repeat " ) ;
-  edgeS25 = trigger ( ) ;
-  delay(50);
-  while ( edgeS25 != HIGH ) {
-    edgeS25 = trigger ( ) ;
-    delay(50);
-  }
-  delay ( 300 ) ;
-}
 //-------------------------------------------------loop function--------------------------------------------------//
 
 void loop ( )
@@ -209,18 +220,11 @@ void loop ( )
             S25= S/(1+0.021*(temp-25));
           }
           displayVol ( voltage1 , voltage2 ) ;
+          displayTemp ( temp ) ;
           displayS ( S ) ;
+          displayS25 ( S25 ) ;
           displayTDS ( Tds ) ;
           displaySal ( Sal ) ;
-          lcd.clear();
-          lcd.print ( "TEMP= wait.." ) ;
-          lcd.setCursor (6, 0) ;
-          lcd.print(temp, 3);
-          lcd.print(" ");
-          lcd.write(byte(0));
-          lcd.print("C");
-          delay(300);
-          displayS25 ( S25 ) ;
         }
       }
       break ;
