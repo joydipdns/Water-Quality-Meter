@@ -14,12 +14,12 @@ boolean edge1 ;
 boolean edge2 ;
 boolean edge3 ;
 boolean edge4 ;
-boolean edgeS ;
 boolean edgeVol ;
-boolean edgeTds ;
-boolean edgeSal ;
 boolean edgeTemp ;
+boolean edgeS ;
 boolean edgeS25 ;
+boolean edgeTds ;
+
 LiquidCrystal lcd (12 , 11 , 5 , 4 , 3 , 2 ) ;
 
 byte degree[8] = {              //custom character degree symbol
