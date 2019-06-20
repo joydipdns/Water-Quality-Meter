@@ -91,11 +91,11 @@ void displayVol ( float v1 , float v2 )        //for displaying measured VOLTAGE
   lcd.clear ( ) ;
   lcd.print ( "V1= " ) ;
   lcd.print ( v1 , 3 ) ;    //LCD prints upto 3 decimal places
-  lcd.print ( " V" ) ;
+  lcd.print ( " volts" ) ;
   lcd.setCursor ( 0, 1 ) ;
   lcd.print ( "V2= " ) ;
   lcd.print ( v2 , 3 ) ;    //LCD prints upto 3 decimal places
-  lcd.print ( " V" ) ;
+  lcd.print ( " volts" ) ;
   delay ( 3000 ) ;
 }
 
@@ -107,6 +107,7 @@ void displayTemp ( float temp )              //for displaying Temperature
   lcd.print(" ");
   lcd.write(byte(0));
   lcd.print("C");
+  lcd.setCursor ( 0, 1 ) ;
   lcd.print ( " PRESS FOR COND " ) ;
   edgeTemp = trigger ( ) ;
   delay(50);
@@ -142,7 +143,7 @@ void displayS25 ( float s25 )                   //for displaying CONDUCTIVITY at
   lcd.print ( s25 , 3) ;      //LCD prints upto 3 decimal places
   lcd.print ( "uS/cm" ) ;
   lcd.setCursor (0, 1) ;
-  lcd.print ( "PRESS FOR TDS  " ) ;
+  lcd.print ( " PRESS FOR TDS  " ) ;
   edgeS25 = trigger ( ) ;
   delay(50);
   while ( edgeS25 != HIGH ) {
