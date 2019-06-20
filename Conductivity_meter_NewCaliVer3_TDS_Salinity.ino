@@ -163,7 +163,7 @@ void displayS25 ( float s25 )                   //for displaying CONDUCTIVITY at
 {
   lcd.clear( ) ;
   lcd.print ( "S(25)= " ) ;
-  lcd.print ( s , 3) ;      //LCD prints upto 3 decimal places
+  lcd.print ( s25 , 3) ;      //LCD prints upto 3 decimal places
   lcd.print ( " uS/cm" ) ;
   lcd.setCursor (0, 1) ;
   lcd.print ( " PRESS to Repeat " ) ;
@@ -193,7 +193,7 @@ void loop ( )
           float voltage1 = sensorValue1 * ( 5.0 / 1023.0 ) ;
           float voltage2 = sensorValue2 * ( 5.0 / 1023.0 ) ;
           float x = voltage1 / voltage2;
-          float temp=tempcomp();
+          float temp=tempComp();
           if (voltage2 == 5.000)
           {
             S = 0.00;
