@@ -1,6 +1,11 @@
 # Conductivity,TDS and Salinity
 Code for measuring and displaying the conductivity, TDS and salinity of any aqueous solution.
-Here is the code for this meter written using Arduino IDE.#include <LiquidCrystal.h>
+
+##The Code
+Here is the code for this meter written in Arduino IDE.
+
+```C++
+#include <LiquidCrystal.h>
 
 //--------------------------------------------initializations--------------------------------------------//
 const int buttonPin = 7 ;
@@ -134,3 +139,7 @@ void loop ( )
       break ;
   }
 }
+```
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
