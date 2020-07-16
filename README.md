@@ -1,7 +1,7 @@
 # Conductivity,TDS and Salinity
 Code for measuring and displaying the conductivity, TDS and salinity of any aqueous solution.
 
-##The Code
+## The Code
 Here is the code for this meter written in Arduino IDE.
 
 ```C++
@@ -140,6 +140,5 @@ void loop ( )
   }
 }
 ```
-
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
